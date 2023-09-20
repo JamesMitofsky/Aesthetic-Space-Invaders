@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import {ref} from 'vue'
 import SpaceshipImage from '../assets/spaceship.png'
+import Modal from "../components/StartGameModal.vue";
 import BulletImage from '../assets/bullets.png'
 
 // Create type Bullets
@@ -21,6 +22,8 @@ type Player = {
   lastShootTime: number
 }
 
+export type Step = "startGame" | "gameMode" | "register"
+
 // Used to store the last time the game loop was run
 let oldTimeStamp = 0
 
@@ -34,6 +37,9 @@ const height = 600
 const width = 400
 let paused = false
 const spaceshipSize = 50
+const startGame = ref(false);
+const step = ref<Step>("startGame");
+const firstName = ref("");
 
 // Declare player object
 const player: Player = {
@@ -206,30 +212,57 @@ const gameUpdate = (deltaTime: number) => {
   }
 }
 
-onMounted(() => {
-  initGame()
-})
+const setgameMode = (gameMode: Step) => {
+  step.value = gameMode;
+}
+
+const setRegister = (register: Step) => {
+  step.value = register;
+}
+
+
+const startGamePlay = (name: string) => {
+  startGame.value = true;
+  firstName.value = name;
+  initGame();
+}
 </script>
 
 <template>
   <body>
-    <div class="canvas-container">
-      <canvas id="canvas" :height="height" :width="width" />
-    </div>
+    <template v-if="!startGame">
+      <Modal :step="step" @set-game-mode="setgameMode" @set-register="setRegister" @start-game-play="startGamePlay"/>
+    </template>
+      <div class="canvas-container">
+        <canvas id="canvas" :height="height" :width="width" />
+      </div>
   </body>
 </template>
 
 <style scoped>
-.canvas-container {
-  height: 100vh;
-  width: 100vw;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+  .canvas-container {
+    z-index: 0;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 
-#canvas {
-  background-color: black;
-  border: 2px solid aqua;
-}
+  #canvas {
+    background-color: black;
+    border: 2px solid aqua;
+  }
+
+  .overlay {
+    z-index: 1;
+    background-color:rgba(118, 118, 118, 0.5);
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    width:100%;
+    height:100%;
+  }
 </style>
