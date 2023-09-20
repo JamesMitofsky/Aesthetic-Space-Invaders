@@ -33,7 +33,7 @@ const player: Player = {
   color: 'red',
   speed: 0.5,
   missiles: [],
-  lastShootTime: 0,
+  lastShootTime: 0
 }
 
 // let player2 = {
@@ -77,7 +77,7 @@ function managePause(event: KeyboardEvent) {
 
 const globallyAssignPressedKey = (event: KeyboardEvent) => {
   const currentlyPressedKey = event.key
-  console.log(currentlyPressedKey);
+  console.log(currentlyPressedKey)
 
   // update stored pressed key
   pressedKey = currentlyPressedKey
@@ -94,7 +94,7 @@ const setArrowKeysNull = () => {
 }
 
 function drawSpaceship(context: CanvasRenderingContext2D, spaceship: HTMLImageElement) {
-  context.drawImage(spaceship, player.x, player.y, 50, 0)
+  context.drawImage(spaceship, player.x, player.y, 50, 50)
 }
 
 function drawMissiles(context: CanvasRenderingContext2D) {
@@ -169,11 +169,11 @@ const gameUpdate = (deltaTime: number) => {
     player.x -= player.speed * deltaTime
   } else if (pressedKey === ' ') {
     // console.log('space pressed -- fire shots')
-    const now = Date.now();
-    const shootRate = 300;
+    const now = Date.now()
+    const shootRate = 300
     if (now - player.lastShootTime > shootRate) {
-      console.log("shoot now");
-      player.lastShootTime = now;
+      console.log('shoot now')
+      player.lastShootTime = now
       addMissileToPlayer()
     }
   }
