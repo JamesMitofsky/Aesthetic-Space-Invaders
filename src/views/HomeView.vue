@@ -1,21 +1,21 @@
-<script setup>
-import { onMounted} from 'vue';
+<script setup lang="ts">
+import { onMounted } from 'vue'
 
-let oldTimeStamp = 0;
-let context = null;
-const height = 600;
-const width = 400;
-let spaceShip = null;
-let pressedKey = null;
+let oldTimeStamp = 0
+let spaceShip: HTMLImageElement | null = null
+let context: CanvasRenderingContext2D | null = null
+let pressedKey: string | null = null
+const height = 600
+const width = 400
 // let lastPressedKey = null;
-let paused = false;
+let paused = false
 
 let player = {
   x: 0,
   y: height - 100,
   width: 0,
   height: 0,
-  color: "red",
+  color: 'red',
   speed: 0.5
 }
 
@@ -27,73 +27,88 @@ let player = {
 //   color: "blue"
 // }
 
-const initGame =() => {
-  const canvas = document.getElementById("canvas");
-  spaceShip = document.getElementById("bullets");
-  player.width = spaceShip.width;
-  player.height = spaceShip.height;
-  player.x = (width - spaceShip.width) / 2;
-  context = canvas.getContext('2d');
-  window.requestAnimationFrame(gameLoop);
+const initGame = () => {
+  const canvas = document.getElementById('canvas') as HTMLCanvasElement | null
+  spaceShip = document.getElementById('bullets') as HTMLImageElement | null
+  if (!spaceShip || !canvas) {
+    console.error("Can't find the canvas or spaceship", canvas, spaceShip)
+    return
+  }
+  player.width = spaceShip.width
+  player.height = spaceShip.height
+  player.x = (width - spaceShip.width) / 2
+  context = canvas.getContext('2d')
+  window.requestAnimationFrame(gameLoop)
 }
 
-const globallyAssignPressedKey = (event) => {
-  const key = event.key;
-  const currentKeyIsP = key === "p";
-  pressedKey = key;
-  const formerKeyIsP = pressedKey === "p";
+const globallyAssignPressedKey = (event: KeyboardEvent) => {
+  const key = event.key
+  const currentKeyIsP = key === 'p'
+  pressedKey = key
+  const formerKeyIsP = pressedKey === 'p'
   if (currentKeyIsP) {
-    paused = true;
+    paused = true
   }
-  console.log("formerKeyIsP",  formerKeyIsP);
-  const needToUnpausePlayer = currentKeyIsP && formerKeyIsP;
-  console.log(needToUnpausePlayer);
+  console.log('formerKeyIsP', formerKeyIsP)
+  const needToUnpausePlayer = currentKeyIsP && formerKeyIsP
+  console.log(needToUnpausePlayer)
   if (needToUnpausePlayer) {
-    pressedKey = null;
-    paused = false;
+    pressedKey = null
+    paused = false
   }
   // console.log(pressedKey);
 }
 
 const setArrowKeysNull = () => {
-  if(pressedKey != "p") {
-    pressedKey = null;
+  if (pressedKey != 'p') {
+    pressedKey = null
   }
   // console.log(pressedKey);
 }
 
 const draw = () => {
-  context.drawImage(spaceShip, player.x, player.y);
+  if (!context || !spaceShip) {
+    console.error("Can't find the context or the spaceship:", context, spaceShip)
+    return
+  }
+
+  context.drawImage(spaceShip, player.x, player.y)
 }
 
-const gameLoop = (timeStamp) => {
-  const deltaTime = timeStamp - oldTimeStamp;
-  oldTimeStamp = timeStamp;
-  context.clearRect(0, 0, width, height);
+const gameLoop = (timeStamp: number) => {
+  const deltaTime = timeStamp - oldTimeStamp
+  oldTimeStamp = timeStamp
+  if (!context) {
+    console.error("Can't find the context ", context)
+    return
+  }
+  context.clearRect(0, 0, width, height)
   // const currentlyPressedKey = pressedKey;
 
-  document.onkeydown = globallyAssignPressedKey;
-  document.onkeyup = setArrowKeysNull;
+  document.onkeydown = globallyAssignPressedKey
+  document.onkeyup = setArrowKeysNull
   // else if (pressedKey === "p" && ) {
 
   // }
-  
+
   // else {
   //   document.onkeydown = globallyAssignPressedKey;
   // }
-  gameUpdate(deltaTime);
-  draw();
-  window.requestAnimationFrame(gameLoop);
+  gameUpdate(deltaTime)
+  draw()
+  window.requestAnimationFrame(gameLoop)
 }
 
-const gameUpdate = (deltaTime) => {
-  if (paused) {return}
-  if (pressedKey === "ArrowRight" && player.x < (width - 30) - player.width) {
-    player.x += 10;
+const gameUpdate = (deltaTime: number) => {
+  if (paused) {
+    return
+  }
+  if (pressedKey === 'ArrowRight' && player.x < width - 30 - player.width) {
+    player.x += 10
     // player.x += player.speed * deltaTime;
   }
-  if (pressedKey === "ArrowLeft" && player.x > 30) {
-    player.x -= player.speed * deltaTime;
+  if (pressedKey === 'ArrowLeft' && player.x > 30) {
+    player.x -= player.speed * deltaTime
   }
   // if (player.x < width - player.width) {
   //   player.x += 1;
@@ -108,34 +123,32 @@ const gameUpdate = (deltaTime) => {
 }
 
 onMounted(() => {
-  initGame();
+  initGame()
 })
-
 </script>
 
 <template>
   <body>
     <div class="canvas-container">
-      <canvas id="canvas" :height="height" :width="width"/>
-      <div style="display: none;">
-        <img id="bullets" src="../assets/bullets.png"/>
+      <canvas id="canvas" :height="height" :width="width" />
+      <div style="display: none">
+        <img id="bullets" src="../assets/bullets.png" />
       </div>
     </div>
   </body>
 </template>
 
 <style scoped>
-  .canvas-container {
-    height: 100vh;
-    width: 100vw;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+.canvas-container {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-  #canvas {
-    background-color: black;
-    border: 2px solid aqua;
-  }
+#canvas {
+  background-color: black;
+  border: 2px solid aqua;
+}
 </style>
-
