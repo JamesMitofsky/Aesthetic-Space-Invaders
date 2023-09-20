@@ -14,6 +14,7 @@ type Player = {
   color: string
   speed: number
   missiles: Missiles
+  lastShootTime: number
 }
 
 let oldTimeStamp = 0
@@ -31,7 +32,8 @@ const player: Player = {
   height: 0,
   color: 'red',
   speed: 0.5,
-  missiles: []
+  missiles: [],
+  lastShootTime: 0,
 }
 
 // let player2 = {
@@ -165,8 +167,14 @@ const gameUpdate = (deltaTime: number) => {
   } else if (pressedKey === 'ArrowLeft' && player.x > 30) {
     player.x -= player.speed * deltaTime
   } else if (pressedKey === ' ') {
-    console.log('space pressed -- fire shots')
-    addMissileToPlayer()
+    // console.log('space pressed -- fire shots')
+    const now = Date.now();
+    const shootRate = 300;
+    if (now - player.lastShootTime > shootRate) {
+      console.log("shoot now");
+      player.lastShootTime = now;
+      addMissileToPlayer()
+    }
   }
 
   // TODO advance any missiles that exist in the array Missiles
