@@ -36,14 +36,6 @@ const player: Player = {
   lastShootTime: 0
 }
 
-// let player2 = {
-//   x: width - 50,
-//   y: height - 50,
-//   width: 50,
-//   height: 50,
-//   color: "blue"
-// }
-
 const initGame = () => {
   const canvas = document.getElementById('canvas') as HTMLCanvasElement | null
   spaceshipEl = document.getElementById('spaceship') as HTMLImageElement | null
@@ -58,39 +50,18 @@ const initGame = () => {
   window.requestAnimationFrame(gameLoop)
 }
 
-function managePause(event: KeyboardEvent) {
-  const key = event.key
-  const currentKeyIsP = key === 'p'
-  pressedKey = key
-  const formerKeyIsP = pressedKey === 'p'
-  if (currentKeyIsP) {
-    paused = true
-  }
-  console.log('formerKeyIsP', formerKeyIsP)
-  const needToUnpausePlayer = currentKeyIsP && formerKeyIsP
-  console.log(needToUnpausePlayer)
-  if (needToUnpausePlayer) {
-    pressedKey = null
-    paused = false
-  }
-}
-
 const globallyAssignPressedKey = (event: KeyboardEvent) => {
   const currentlyPressedKey = event.key
   console.log(currentlyPressedKey)
 
   // update stored pressed key
   pressedKey = currentlyPressedKey
-  // if(currentlyPressedKey === "space") {
-
-  // }
 }
 
 const setArrowKeysNull = () => {
   if (pressedKey != 'p') {
     pressedKey = null
   }
-  // console.log(pressedKey);
 }
 
 function drawSpaceship(context: CanvasRenderingContext2D, spaceship: HTMLImageElement) {
@@ -98,27 +69,10 @@ function drawSpaceship(context: CanvasRenderingContext2D, spaceship: HTMLImageEl
 }
 
 function drawMissiles(context: CanvasRenderingContext2D) {
-  // draw missiles from the array of missiles in player
-  // for each missile in player.missiles
-  // draw the missile
-  // move the missile
   player.missiles.forEach((missile) => {
     context.fillStyle = 'yellow'
     context.fillRect(missile.x, missile.y, 10, 10)
   })
-
-  // create bullet
-  // const spaceshipCenterPositionX = player.x + player.width / 2
-  // const spaceshipTopPositionY = player.y
-  // const bulletSize = 10
-  // // set bullet positions so they are centered
-  // const bulletCenterPositionX = spaceshipCenterPositionX - bulletSize / 2
-  // const bulletTopPositionY = spaceshipTopPositionY - bulletSize / 2
-  // context.fillStyle = 'yellow'
-  // context.fillRect(bulletCenterPositionX, bulletTopPositionY, bulletSize, bulletSize)
-
-  // // move the bullet
-  // const bulletSpeed = 1
 }
 
 function addMissileToPlayer() {
@@ -184,17 +138,6 @@ const gameUpdate = (deltaTime: number) => {
       missile.y -= 1
     })
   }
-
-  // if (player.x < width - player.width) {
-  //   player.x += 1;
-  // }
-  // if (player3.x < width - player3.width) {
-  //   player3.x += 1;
-  // }
-  // if (player2.x > 0) {
-  //   player2.x -= 1;
-  // }
-  //context.fillRect(player.x, player.y, spaceShip.width, spaceShip.height);
 }
 
 onMounted(() => {
