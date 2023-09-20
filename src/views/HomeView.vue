@@ -18,7 +18,7 @@ type Player = {
 }
 
 let oldTimeStamp = 0
-let spaceShip: HTMLImageElement | null = null
+let spaceshipEl: HTMLImageElement | null = null
 let context: CanvasRenderingContext2D | null = null
 let pressedKey: string | null = null
 const height = 600
@@ -46,14 +46,14 @@ const player: Player = {
 
 const initGame = () => {
   const canvas = document.getElementById('canvas') as HTMLCanvasElement | null
-  spaceShip = document.getElementById('bullets') as HTMLImageElement | null
-  if (!spaceShip || !canvas) {
-    console.error("Can't find the canvas or spaceship", canvas, spaceShip)
+  spaceshipEl = document.getElementById('spaceship') as HTMLImageElement | null
+  if (!spaceshipEl || !canvas) {
+    console.error("Can't find the canvas or spaceship", canvas, spaceshipEl)
     return
   }
-  player.width = spaceShip.width
-  player.height = spaceShip.height
-  player.x = (width - spaceShip.width) / 2
+  player.width = spaceshipEl.width
+  player.height = spaceshipEl.height
+  player.x = (width - spaceshipEl.width) / 2
   context = canvas.getContext('2d')
   window.requestAnimationFrame(gameLoop)
 }
@@ -77,6 +77,7 @@ function managePause(event: KeyboardEvent) {
 
 const globallyAssignPressedKey = (event: KeyboardEvent) => {
   const currentlyPressedKey = event.key
+  console.log(currentlyPressedKey);
 
   // update stored pressed key
   pressedKey = currentlyPressedKey
@@ -93,7 +94,7 @@ const setArrowKeysNull = () => {
 }
 
 function drawSpaceship(context: CanvasRenderingContext2D, spaceship: HTMLImageElement) {
-  context.drawImage(spaceship, player.x, player.y)
+  context.drawImage(spaceship, player.x, player.y, 50, 0)
 }
 
 function drawMissiles(context: CanvasRenderingContext2D) {
@@ -130,11 +131,11 @@ function addMissileToPlayer() {
 
 const draw = () => {
   // error checking
-  if (!context || !spaceShip) {
-    console.error("Can't find the context or the spaceship:", context, spaceShip)
+  if (!context || !spaceshipEl) {
+    console.error("Can't find the context or the spaceship:", context, spaceshipEl)
     return
   }
-  drawSpaceship(context, spaceShip)
+  drawSpaceship(context, spaceshipEl)
 
   drawMissiles(context)
 }
@@ -206,7 +207,7 @@ onMounted(() => {
     <div class="canvas-container">
       <canvas id="canvas" :height="height" :width="width" />
       <div style="display: none">
-        <img id="bullets" src="../assets/bullets.png" />
+        <img id="spaceship" src="../assets/spaceship.png" />
       </div>
     </div>
   </body>
