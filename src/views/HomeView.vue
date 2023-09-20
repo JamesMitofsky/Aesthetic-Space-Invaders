@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import SpaceshipImage from '../assets/spaceship.png'
+import BulletImage from '../assets/bullets.png'
 
-type Missiles = {
+type Bullets = {
   x: number
   y: number
 }[]
@@ -14,7 +15,7 @@ type Player = {
   height: number
   color: string
   speed: number
-  missiles: Missiles
+  bullets: Bullets
   lastShootTime: number
 }
 
@@ -33,7 +34,7 @@ const player: Player = {
   height: spaceshipSize,
   color: 'red',
   speed: 0.5,
-  missiles: [],
+  bullets: [],
   lastShootTime: 0
 }
 
@@ -70,18 +71,22 @@ function drawSpaceship(context: CanvasRenderingContext2D) {
   context.drawImage(spaceshipImageElement, player.x, player.y, spaceshipSize, spaceshipSize)
 }
 
-function drawMissiles(context: CanvasRenderingContext2D) {
-  const missileSize = 10
+function drawBullets(context: CanvasRenderingContext2D) {
+  const bulletSize = 10
 
-  player.missiles.forEach((missile) => {
-    context.fillStyle = 'yellow'
-    context.fillRect(missile.x, missile.y, missileSize, missileSize)
+  player.bullets.forEach((bullet) => {
+    
+  const bulletImageElement = new Image()
+  bulletImageElement.src = BulletImage
+
+  context.drawImage(bulletImageElement, bullet.x, bullet.y, bulletSize, bulletSize)
   })
+
 }
 
-function addMissileToPlayer() {
+function addBulletToPlayer() {
   const bulletSize = 10
-  player.missiles.push({
+  player.bullets.push({
     x: player.x + player.width / 2 - bulletSize / 2,
     y: player.y - bulletSize / 2
   })
@@ -95,7 +100,7 @@ const draw = () => {
   }
   drawSpaceship(context)
 
-  drawMissiles(context)
+  drawBullets(context)
 }
 
 const gameLoop = (timeStamp: number) => {
@@ -134,14 +139,14 @@ const gameUpdate = (deltaTime: number) => {
     if (now - player.lastShootTime > shootRate) {
       console.log('shoot now')
       player.lastShootTime = now
-      addMissileToPlayer()
+      addBulletToPlayer()
     }
   }
 
-  // TODO advance any missiles that exist in the array Missiles
-  if (player.missiles.length > 0) {
-    player.missiles.forEach((missile) => {
-      missile.y -= 1
+  // TODO advance any bullets that exist in the array Bullets
+  if (player.bullets.length > 0) {
+    player.bullets.forEach((bullet) => {
+      bullet.y -= 1
     })
   }
 }
