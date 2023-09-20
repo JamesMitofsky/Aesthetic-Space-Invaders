@@ -24,12 +24,13 @@ let pressedKey: string | null = null
 const height = 600
 const width = 400
 let paused = false
+const spaceshipSize = 50
 
 const player: Player = {
-  x: 0,
+  x: (width - spaceshipSize) / 2,
   y: height - 100,
-  width: 0,
-  height: 0,
+  width: spaceshipSize,
+  height: spaceshipSize,
   color: 'red',
   speed: 0.5,
   missiles: [],
@@ -39,13 +40,12 @@ const player: Player = {
 const initGame = () => {
   const canvas = document.getElementById('canvas') as HTMLCanvasElement | null
 
-  if (!canvas) {
+  if (canvas) {
+    context = canvas.getContext('2d')
+    window.requestAnimationFrame(gameLoop)
+  } else {
     console.error("Can't find the canvas element")
-    return
   }
-
-  context = canvas.getContext('2d')
-  window.requestAnimationFrame(gameLoop)
 }
 
 const globallyAssignPressedKey = (event: KeyboardEvent) => {
@@ -63,19 +63,19 @@ const setArrowKeysNull = () => {
 }
 
 function drawSpaceship(context: CanvasRenderingContext2D) {
+  // create spaceship image
   const spaceshipImageElement = new Image()
   spaceshipImageElement.src = SpaceshipImage
-  spaceshipImageElement.width = 50
-  spaceshipImageElement.height = 50
-  context.drawImage(spaceshipImageElement, player.x, player.y, 50, 50)
 
-  // context.drawImage(spaceship, player.x, player.y, 50, 50)
+  context.drawImage(spaceshipImageElement, player.x, player.y, spaceshipSize, spaceshipSize)
 }
 
 function drawMissiles(context: CanvasRenderingContext2D) {
+  const missileSize = 10
+
   player.missiles.forEach((missile) => {
     context.fillStyle = 'yellow'
-    context.fillRect(missile.x, missile.y, 10, 10)
+    context.fillRect(missile.x, missile.y, missileSize, missileSize)
   })
 }
 
@@ -120,10 +120,12 @@ const gameUpdate = (deltaTime: number) => {
     return
   }
 
+  const margin = 30
+
   // handle key inputs
-  if (pressedKey === 'ArrowRight' && player.x < width - 30 - player.width) {
+  if (pressedKey === 'ArrowRight' && player.x < width - margin - player.width) {
     player.x += player.speed * deltaTime
-  } else if (pressedKey === 'ArrowLeft' && player.x > 30) {
+  } else if (pressedKey === 'ArrowLeft' && player.x > margin) {
     player.x -= player.speed * deltaTime
   } else if (pressedKey === ' ') {
     // console.log('space pressed -- fire shots')
