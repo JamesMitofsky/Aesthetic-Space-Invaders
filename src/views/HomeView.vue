@@ -43,9 +43,11 @@ const initGame = () => {
     console.error("Can't find the canvas or spaceship", canvas, spaceshipEl)
     return
   }
-  player.width = spaceshipEl.width
-  player.height = spaceshipEl.height
+  player.width = spaceshipEl.width;
+  player.height = spaceshipEl.height;
   player.x = (width - spaceshipEl.width) / 2
+  console.log(width, spaceshipEl.width);
+  console.log(player);
   context = canvas.getContext('2d')
   window.requestAnimationFrame(gameLoop)
 }
@@ -150,7 +152,7 @@ onMounted(() => {
     <div class="canvas-container">
       <canvas id="canvas" :height="height" :width="width" />
       <div style="display: none">
-        <img id="spaceship" src="../assets/spaceship.png" />
+        <img id="spaceship" src="../assets/spaceship.png" width="50" height="50" />
       </div>
     </div>
   </body>
