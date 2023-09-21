@@ -18,6 +18,14 @@
           </button>
         </div>
       </template>
+      <!-- <template v-if="props.step === 'gameOver'">
+        <div class="game-mode-container">
+          <h1>Game over</h1>
+          <button @click="emit('revenge', 'startGame')">
+            Rejouer
+          </button>
+        </div>
+      </template> -->
     </div>
   </div>
 </template>
@@ -30,8 +38,8 @@ const firstName = ref('')
 const props = defineProps<{
   step: Step
 }>()
-
-const emit = defineEmits(['setGameMode', 'setRegister', 'startGamePlay'])
+console.log(props.step)
+const emit = defineEmits(['setGameMode', 'setRegister', 'startGamePlay', 'revenge'])
 </script>
 
 <style>

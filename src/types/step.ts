@@ -1,1 +1,1 @@
-export type Step = 'startGame' | 'gameMode' | 'register' | 'endGame'
+export type Step = 'startGame' | 'gameMode' | 'register' | 'gameOver'
