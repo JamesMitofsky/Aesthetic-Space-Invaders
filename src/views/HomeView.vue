@@ -9,7 +9,7 @@ import type { Key } from '../types/key'
 import type { Step } from '../types/step'
 
 let gameObjectList: GameObject[] = []
-const windowHeight = 600
+const windowHeight = 700
 const windowWidth = 600
 let player: GameObject | null = null
 let score = ref(0)
@@ -20,6 +20,7 @@ const startGame = ref(false)
 const step = ref<Step>('startGame')
 const firstName = ref('')
 const gameOver = ref(false);
+const gameWin = ref(false);
 
 const drawCanvas = () => {
   const canvas = document.getElementById('canvas') as HTMLCanvasElement | null
@@ -45,7 +46,7 @@ const initGame = () => {
   for (let i = 0; i < 5; i++) {
     for (let j = 0; j < 7; j++) {
       const enemy = new Enemy()
-      enemy.setPosition(j * 60, i * 60)
+      enemy.setPosition(j * enemy.width, i * enemy.height)
       gameObjectList.push(enemy)
     }
   }
@@ -75,15 +76,17 @@ const updateEnemyPosition = () => {
     if (player) {
       if (enemy.y + enemy.height > player.y + player.height || collision(player, enemy)) {
         gameOver.value = true;
-          console.log("game Over");
       }
     }
+  }
+  if (enemyList.length === 0) {
+    gameWin.value = true;
   }
 }
 
 const adjustEnemiesSpeed = (gameObjectList: any) => {
   const enemyList = gameObjectList.filter((el: any) => el.tag === 'enemy')
-    if (gameObjectList.length < 10) {
+    if (enemyList.length <= 5) {
       enemyList.forEach((enemy: any) => { enemy.speed = 0.4; enemy.speedY = 15;})
   }
 }
@@ -174,13 +177,15 @@ const startGamePlay = (name: string) => {
 }
 
 const refreshPage = () => {
+  gameObjectList = [];
   clearCanvas();
-  gameOver.value = false;
   window.location.reload();
+  gameOver.value = false;
+  gameWin.value = false;
 }
 
 onUnmounted(() => {
-  clearCanvas()
+  clearCanvas();
 })
 </script>
 
@@ -202,9 +207,10 @@ onUnmounted(() => {
       <div class="canvas-container">
         <canvas id="canvas" :height="windowHeight" :width="windowWidth" />
       </div>
-      <template v-if="gameOver">
+      <template v-if="gameOver || gameWin">
         <div class="game-over">
-          <h1>GAME OVER</h1>
+          <h1 v-if="gameOver">GAME OVER</h1>
+          <h1 v-if="gameWin">YOU WIN</h1>
           <button @click="refreshPage()">Rejouer</button>
         </div>
       </template>
@@ -223,10 +229,11 @@ onUnmounted(() => {
 .game-over {
   position: absolute;
   z-index: 1;
-  background-color: rgba(25, 23, 23, 0.5);
+  background-color: rgba(25, 23, 23, 0.7);
   height: 100vh;
   width: 100vw;
   font-size: 40px;
+  color: white;
   font-weight: bolder;
   display: flex;
   align-items: center;
@@ -261,9 +268,9 @@ button {
   position: absolute;
   top: 30px;
   left: 30px;
-  background-color: grey;
+  background-color: gray;
   padding: 20px;
-  border-radius: 20px;
+  border-radius: 10px;
   color: white;
   font-weight: bold;
 }

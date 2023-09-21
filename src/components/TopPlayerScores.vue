@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="topScores.length > 1">
     <h1>Top Player Scores</h1>
     <ul>
       <li v-for="score in topScores" :key="score.id">{{ score.username }} - {{ score.score }}</li>
@@ -30,6 +30,7 @@ onMounted(async () => {
 
 <style>
   li {
+    font-size: 20px;
     list-style: decimal;
     margin: auto;
   }

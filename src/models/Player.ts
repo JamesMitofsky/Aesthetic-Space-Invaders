@@ -16,11 +16,11 @@ export default class Player extends GameObject {
   update(deltaTime: number, pressedKey: string | null) {
     this.shootTimer -= deltaTime
 
-    if (pressedKey === 'ArrowRight' && this.x < 600 - 20 - this.width) {
+    if (pressedKey === 'ArrowRight' && this.x < 600 - this.width) {
       this.move(1, 0, deltaTime)
     }
 
-    if (pressedKey === 'ArrowLeft' && this.x > 20) {
+    if (pressedKey === 'ArrowLeft' && this.x > 0) {
       this.move(-1, 0, deltaTime)
     }
 
