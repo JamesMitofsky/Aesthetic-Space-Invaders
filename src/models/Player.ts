@@ -8,7 +8,7 @@ export default class Player extends GameObject {
   constructor() {
     super()
     this.speed = 0.2
-    this.setImage(SpaceshipImage, 50, 50)
+    this.setImage(SpaceshipImage, 60, 60)
     this.shootDelay = 300
     this.shootTimer = 0
   }
@@ -16,7 +16,7 @@ export default class Player extends GameObject {
   update(deltaTime: number, pressedKey: string | null) {
     this.shootTimer -= deltaTime
 
-    if (pressedKey === 'ArrowRight' && this.x < 400 - 20 - this.width) {
+    if (pressedKey === 'ArrowRight' && this.x < 600 - 20 - this.width) {
       this.move(1, 0, deltaTime)
     }
 

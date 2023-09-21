@@ -27,3 +27,10 @@ onMounted(async () => {
   }
 })
 </script>
+
+<style>
+  li {
+    list-style: decimal;
+    margin: auto;
+  }
+</style>

@@ -10,7 +10,7 @@ import type { Step } from '../types/step'
 
 let gameObjectList: GameObject[] = []
 const windowHeight = 600
-const windowWidth = 400
+const windowWidth = 600
 let player: GameObject | null = null
 let score = ref(0)
 let oldTimeStamp = 0
@@ -19,6 +19,7 @@ let pressedKey: Key = null
 const startGame = ref(false)
 const step = ref<Step>('startGame')
 const firstName = ref('')
+const gameOver = ref(false);
 
 const drawCanvas = () => {
   const canvas = document.getElementById('canvas') as HTMLCanvasElement | null
@@ -32,7 +33,7 @@ const drawCanvas = () => {
 }
 
 const clearCanvas = () => {
-  context?.closePath()
+  context?.closePath();
 }
 // Initialize the game
 const initGame = () => {
@@ -42,7 +43,7 @@ const initGame = () => {
   gameObjectList.push(player)
 
   for (let i = 0; i < 5; i++) {
-    for (let j = 0; j < 4; j++) {
+    for (let j = 0; j < 7; j++) {
       const enemy = new Enemy()
       enemy.setPosition(j * 60, i * 60)
       gameObjectList.push(enemy)
@@ -50,30 +51,40 @@ const initGame = () => {
   }
 }
 
+const collision = (object1: GameObject, object2: GameObject)=> {
+  if (object1.x > object2.x &&
+        object1.x < object2.x + object2.width &&
+        object1.y > object2.y &&
+        object1.y < object2.y + object2?.height
+    ) {
+      return true;
+    }
+}
+
 const updateEnemyPosition = () => {
   const enemyList = gameObjectList.filter((el) => el.tag === 'enemy')
-  let pixelDown = 0
   for (let enemy of enemyList) {
-    if (enemy.x < 20) {
-      enemyList.forEach((enemy) => {
-        enemy.directionX = 1
-      })
-      enemyList.forEach((enemy) => {
-        enemy.y += pixelDown
-      })
-      pixelDown += 2
+    if (enemy.x < 0) {
+      enemyList.forEach((enemy) => { enemy.directionX = 1 })
+      enemyList.forEach((enemy) => { enemy.y +=  enemy.speedY})
     }
-    if (enemy.x > 400 - 20 - enemy.width) {
+    if (enemy.x + enemy.width > windowWidth) {
       enemyList.forEach((enemy) => (enemy.directionX = -1))
-      enemyList.forEach((enemy) => {
-        enemy.y += pixelDown
-      })
-      pixelDown += 2
+      enemyList.forEach((enemy) => {enemy.y += enemy.speedY})
     }
-    if (enemy.y + enemy.height >= 480) {
-      step.value = 'gameOver'
-      startGame.value = false
+    if (player) {
+      if (enemy.y + enemy.height > player.y + player.height || collision(player, enemy)) {
+        gameOver.value = true;
+          console.log("game Over");
+      }
     }
+  }
+}
+
+const adjustEnemiesSpeed = (gameObjectList: any) => {
+  const enemyList = gameObjectList.filter((el: any) => el.tag === 'enemy')
+    if (gameObjectList.length < 10) {
+      enemyList.forEach((enemy: any) => { enemy.speed = 0.4; enemy.speedY = 15;})
   }
 }
 
@@ -81,17 +92,13 @@ const updateEnemyPosition = () => {
 const onKeyPressed = (event: KeyboardEvent) => {
   // Store pressed key
   const currentlyPressedKey = event.key as Key
-
   // Update stored pressed key
   pressedKey = currentlyPressedKey
 }
 
 // Check if pressed key is p, if not, set pressed key to null
 const setArrowKeysNull = () => {
-  // If pressed key is not p, set pressed key to null and keep the game running
-  if (pressedKey != 'p') {
     pressedKey = null
-  }
 }
 
 const draw = () => {
@@ -99,31 +106,26 @@ const draw = () => {
     gameobject.draw(context)
   }
 }
-
 // Function that contains the game events
 const gameLoop = (timeStamp: number) => {
   // Calculate the time since the last frame
   const deltaTime = timeStamp - oldTimeStamp
-
   // Set the old time stamp to the current time stamp
   oldTimeStamp = timeStamp
-
   // Error checking
   if (!context) {
     console.error("Can't find the context ", context)
     return
   }
-
   // Clear the canvas
   context.clearRect(0, 0, windowWidth, windowHeight)
-
   // Listen for key events and update the pressed key
   document.onkeydown = onKeyPressed
   document.onkeyup = setArrowKeysNull
-
-  gameUpdate(deltaTime)
+  if (!gameOver.value) {
+    gameUpdate(deltaTime)
+  }
   draw()
-
   // Call the game loop again on the next frame
   window.requestAnimationFrame(gameLoop)
 }
@@ -131,19 +133,15 @@ const gameLoop = (timeStamp: number) => {
 const gameUpdate = (deltaTime: number) => {
   updateEnemyPosition()
   // chek for collisions
+  adjustEnemiesSpeed(gameObjectList);
   if (player) {
     for (const missile of player.children) {
       for (const gameObject of gameObjectList) {
         if (gameObject.tag === 'enemy') {
-          if (
-            missile.x > gameObject.x &&
-            missile.x < gameObject.x + gameObject.width &&
-            missile.y > gameObject.y &&
-            missile.y < gameObject.y + gameObject.height
-          ) {
-            console.log('collision')
+          if (collision(missile, gameObject)) {
             // Remove missile from player children
-            player.children = player!.children.filter((child) => child !== missile)
+            const indexOfMissileToRemove = gameObjectList.findIndex(el => el.x === missile.x && el.y === missile.y)
+            player.children.splice(indexOfMissileToRemove, 1);
             // Remove enemy from gameobjectlist
             gameObjectList = gameObjectList.filter((object) => object !== gameObject)
             score.value++
@@ -169,16 +167,16 @@ const setRegister = (register: Step) => {
   step.value = register
 }
 
-// const restartGame = (restartGame: Step) => {
-//   step.value = restartGame;
-//   startGame.value = true;
-//   console.log(step.value);
-// }
-
 const startGamePlay = (name: string) => {
   startGame.value = true
   firstName.value = name
-  initGame()
+  initGame();
+}
+
+const refreshPage = () => {
+  clearCanvas();
+  gameOver.value = false;
+  window.location.reload();
 }
 
 onUnmounted(() => {
@@ -187,7 +185,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <body class="no-scroll">
+  <body>
     <div class="flex">
       <p>{{ `score: ${score}` }}</p>
       <template v-if="!startGame">
@@ -198,10 +196,18 @@ onUnmounted(() => {
           @start-game-play="startGamePlay"
         />
       </template>
-      <TopPlayerScoresVue />
+      <div class="score">
+        <TopPlayerScoresVue />
+      </div>
       <div class="canvas-container">
         <canvas id="canvas" :height="windowHeight" :width="windowWidth" />
       </div>
+      <template v-if="gameOver">
+        <div class="game-over">
+          <h1>GAME OVER</h1>
+          <button @click="refreshPage()">Rejouer</button>
+        </div>
+      </template>
     </div>
   </body>
 </template>
@@ -214,11 +220,23 @@ onUnmounted(() => {
   align-items: center;
 }
 
-.no-scroll {
-  overflow: hidden;
+.game-over {
+  position: absolute;
+  z-index: 1;
+  background-color: rgba(25, 23, 23, 0.5);
+  height: 100vh;
+  width: 100vw;
+  font-size: 40px;
+  font-weight: bolder;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
 
 .flex {
+  position: relative;
+  background-image: url("../assets/sky.png");
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -231,9 +249,23 @@ p {
   color: white;
 }
 
-#canvas {
-  background-color: black;
-  border: 2px solid aqua;
+button {
+  background-color: aqua;
+  padding: 10px;
+  border-radius: 20px;
+  font-size: 30px;
+  margin: 20px;
+}
+
+.score {
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  background-color: grey;
+  padding: 20px;
+  border-radius: 20px;
+  color: white;
+  font-weight: bold;
 }
 
 .overlay {
