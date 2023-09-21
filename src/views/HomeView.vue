@@ -1,61 +1,62 @@
 <script setup lang="ts">
 import {ref} from 'vue'
-import SpaceshipImage from '../assets/spaceship.png'
 import Modal from "../components/StartGameModal.vue";
-import BulletImage from '../assets/bullets.png'
+import GameObject from "../models/Game0bject";
+import Player from "../models/Player";
+import Enemy from "../models/Enemy";
 
-// Create type Bullets
-type Bullets = {
-  x: number
-  y: number
-}[]
+let gameObjectList: GameObject[] = [];
+const windowHeight = 600;
+const windowWidth = 400;
 
-// Create type Player
-type Player = {
-  x: number
-  y: number
-  width: number
-  height: number
-  color: string
-  speed: number
-  bullets: Bullets
-  lastShootTime: number
+const player = new Player();
+player.setPosition((windowWidth - player.width) / 2, windowHeight - 80);
+gameObjectList.push(player);
+
+for (let i = 0; i < 3; i++) {
+  for (let j = 0; j < 5; j++) {
+    const enemy = new Enemy();
+    enemy.setPosition(j * 60, i * 60);
+    gameObjectList.push(enemy);
+  }
 }
 
 export type Step = "startGame" | "gameMode" | "register"
 
-// Used to store the last time the game loop was run
 let oldTimeStamp = 0
 
-// Used to store the context of the canvas element on the page
 let context: CanvasRenderingContext2D | null = null
 
-// Used to store the last key pressed
 let pressedKey: string | null = null
 
-const height = 600
-const width = 400
+
 let paused = false
 const spaceshipSize = 50
 const startGame = ref(false);
 const step = ref<Step>("startGame");
 const firstName = ref("");
+const margin = 10;
 
 // Declare player object
-const player: Player = {
-  x: (width - spaceshipSize) / 2,
-  y: height - 100,
-  width: spaceshipSize,
-  height: spaceshipSize,
-  color: 'red',
-  speed: 0.5,
-  bullets: [],
-  lastShootTime: 0
-}
+// const player: Player = {
+//   x: (width - spaceshipSize) / 2,
+//   y: height - 100,
+//   width: spaceshipSize,
+//   height: spaceshipSize,
+//   speed: 0.5,
+//   bullets: [],
+//   lastShootTime: 0
+// }
 
+// const aliens: Aliens = {
+//   aliensEachLines: 8,
+//   aliensLines: 8,
+//   alienList: []
+// }
 // Initialize the game
 const initGame = () => {
   const canvas = document.getElementById('canvas') as HTMLCanvasElement | null
+
 
   // Check if canvas exists, if so, get context and start game loop
   if (canvas) {
@@ -64,14 +65,20 @@ const initGame = () => {
   } else {
     console.error("Can't find the canvas element")
   }
+  // for (let i = 0; i < aliens.aliensLines; i++) {
+  //   let list = []
+  //   for (let j = 0; j < aliens.aliensEachLines; j++) {
+  //     list.push({x: j * 40, y: i * 40});
+  //   }
+  //   aliens.alienList.push(list)
+  // }
 }
 
 // Assign pressed key to global variable
-const globallyAssignPressedKey = (event: KeyboardEvent) => {
+const onKeyPressed = (event: KeyboardEvent) => {
 
   // Store pressed key
   const currentlyPressedKey = event.key
-  console.log(currentlyPressedKey)
 
   // Update stored pressed key
   pressedKey = currentlyPressedKey
@@ -86,64 +93,92 @@ const setArrowKeysNull = () => {
   }
 }
 
+// const enemyMovement = () => {
+//   for () {
+//     for (alien of aliens.aliensEachLines) {
+//       if ()
+//     }
+//     aliens.alienList.push(list)
+//   }
+// }
+
 // Function to draw the spaceship on the canvas
-function drawSpaceship(context: CanvasRenderingContext2D) {
+// function drawSpaceship(context: CanvasRenderingContext2D) {
 
-  // Ceate a new image element
-  const spaceshipImageElement = new Image()
+//   // Ceate a new image element
+//   const spaceshipImageElement = new Image()
 
-  // Set the source of the image element to the spaceship image
-  spaceshipImageElement.src = SpaceshipImage
+//   // Set the source of the image element to the spaceship image
+//   spaceshipImageElement.src = SpaceshipImage
 
-  // Draw the spaceship image element on the canvas
-  context.drawImage(spaceshipImageElement, player.x, player.y, spaceshipSize, spaceshipSize)
-}
+//   // Draw the spaceship image element on the canvas
+//   context.drawImage(spaceshipImageElement, player.x, player.y, spaceshipSize, spaceshipSize)
+// }
 
 // Function to draw the bullets on the canvas
-function drawBullets(context: CanvasRenderingContext2D) {
+// function drawBullets(context: CanvasRenderingContext2D) {
 
-  // Set the size of the bullets
-  const bulletSize = 10
+//   // Set the size of the bullets
+//   const bulletSize = 10
 
-  // Loop through the bullets array and draw each bullet
-  player.bullets.forEach((bullet) => {
+//   // Loop through the bullets array and draw each bullet
+//   // player.bullets.forEach((bullet) => {
   
-  // Create a new image element
-  const bulletImageElement = new Image()
+//   // Create a new image element
+//   const bulletImageElement = new Image()
 
-  // Set the source of the image element to the bullet image
-  bulletImageElement.src = BulletImage
+//   // Set the source of the image element to the bullet image
+//   bulletImageElement.src = BulletImage
 
-  // Draw the bullet image element on the canvas
-  context.drawImage(bulletImageElement, bullet.x, bullet.y, bulletSize, bulletSize)
-  })
+//   // Draw the bullet image element on the canvas
+//   // context.drawImage(bulletImageElement, bullet.x, bullet.y, bulletSize, bulletSize)
+//   })
 
-}
+// }
 
-// Function to add the bullets to the player object
-function addBulletToPlayer() {
+// function drawALiens(context: CanvasRenderingContext2D) {
 
-  // Set the size of the bullets
-  const bulletSize = 10
+// // Set the size of the bullets
+//   const alienSize = 40
 
-  // push each new bullet into the bullets array
-  player.bullets.push({
+//   // Loop through the bullets array and draw each bullet
+//   aliens.alienList.forEach((aliens) => {
+//     aliens.forEach((alien) => {
+//       const alienImageElement = new Image()
+//       alienImageElement.src = AlienImage
 
-    // Set the x and y coordinates of the bullet
-    x: player.x + player.width / 2 - bulletSize / 2,
-    y: player.y - bulletSize / 2
-  })
-}
+//   // Draw the bullet image element on the canvas
+//     context.fillStyle = "red";
+//     context.drawImage(alienImageElement, alien.x, alien.y, alienSize, alienSize)
+//   })
+// })
+
+// }
+
+// // Function to add the bullets to the player object
+// function addBulletToPlayer() {
+
+//   // Set the size of the bullets
+//   const bulletSize = 10
+
+//   // push each new bullet into the bullets array
+//   player.bullets.push({
+
+//     // Set the x and y coordinates of the bullet
+//     x: player.x + player.width / 2 - bulletSize / 2,
+//     y: player.y - bulletSize / 2
+//   })
+// }
 
 const draw = () => {
-  // Error checking
-  if (!context) {
-    console.error("Can't find the context:", context)
-    return
+  for (let gameobject of gameObjectList) {
+    gameobject.draw(context);
+    // context?.drawImage(gameobject.image, gameobject.x, gameobject.y, gameobject.width, gameobject.height);
   }
-  drawSpaceship(context)
-
-  drawBullets(context)
+  // Error checking
+  // drawSpaceship(context)
+  // drawBullets(context)
+  // drawALiens(context)
 }
 
 // Function that contains the game events
@@ -162,10 +197,10 @@ const gameLoop = (timeStamp: number) => {
   }
 
   // Clear the canvas
-  context.clearRect(0, 0, width, height)
+  context.clearRect(0, 0, windowWidth, windowHeight)
 
   // Listen for key events and update the pressed key
-  document.onkeydown = globallyAssignPressedKey
+  document.onkeydown = onKeyPressed
   document.onkeyup = setArrowKeysNull
 
   gameUpdate(deltaTime)
@@ -176,40 +211,56 @@ const gameLoop = (timeStamp: number) => {
 }
 
 const gameUpdate = (deltaTime: number) => {
-  if (paused) {
-    return
-  }
+  // chek for collisions
+  for (const missile of player.children) {
+    for (const gameObject of gameObjectList) {
+      if (gameObject.tag ==="enemy") {
+        // Check collision with enemy
 
-  const margin = 30
+        // If yes
+        // Enelever le missile des enfants de player
+        // Enlever l'ennemi de la liste gameobjectlist
+      }
 
-  // Handle key inputs
-  if (pressedKey === 'ArrowRight' && player.x < width - margin - player.width) {
-    player.x += player.speed * deltaTime
-  } else if (pressedKey === 'ArrowLeft' && player.x > margin) {
-    player.x -= player.speed * deltaTime
-  } else if (pressedKey === ' ') {
-    // Console.log('space pressed -- fire shots')
-
-    // Register the time of the shot
-    const now = Date.now()
-
-    // Set the rate of fire
-    const shootRate = 300
-
-    // Check if the time of the shot is greater than the rate of fire to prevent spamming
-    if (now - player.lastShootTime > shootRate) {
-      console.log('shoot now')
-      player.lastShootTime = now
-      addBulletToPlayer()
     }
   }
 
-  // Advance any bullets that exist in the array Bullets
-  if (player.bullets.length > 0) {
-    player.bullets.forEach((bullet) => {
-      bullet.y -= 1
-    })
+  // Update main objects
+  for (let gameObject of gameObjectList) {
+    gameObject.mainUpdate(deltaTime, pressedKey);
   }
+  // Handle key inputs
+  // if (pressedKey === 'ArrowRight') { // && player.x < windowWidth - margin - player.width) {
+  //   player.move(1, 0, deltaTime);
+  // } 
+  // if (pressedKey === "ArrowLeft") {
+  //   player.move(-1, 0, deltaTime);
+  // }
+  //else if (pressedKey === 'ArrowLeft' && player.x > margin) {
+  //   player.x -= player.speed * deltaTime
+  // } else if (pressedKey === ' ') {
+  //   console.log('space pressed -- fire shots')
+
+  //   // Register the time of the shot
+  //   const now = Date.now()
+
+  //   // Set the rate of fire
+  //   const shootRate = 300
+
+    // Check if the time of the shot is greater than the rate of fire to prevent spamming
+    // if (now - player.lastShootTime > shootRate) {
+    //   console.log('shoot now')
+    //   player.lastShootTime = now
+    //   addBulletToPlayer()
+    // }
+  // }
+
+  // Advance any bullets that exist in the array Bullets
+  // if (player.bullets.length > 0) {
+  //   player.bullets.forEach((bullet) => {
+  //     bullet.y -= 4
+  //   })
+  // }
 }
 
 const setgameMode = (gameMode: Step) => {
@@ -234,7 +285,7 @@ const startGamePlay = (name: string) => {
       <Modal :step="step" @set-game-mode="setgameMode" @set-register="setRegister" @start-game-play="startGamePlay"/>
     </template>
       <div class="canvas-container">
-        <canvas id="canvas" :height="height" :width="width" />
+        <canvas id="canvas" :height="windowHeight" :width="windowWidth" />
       </div>
   </body>
 </template>
@@ -266,3 +317,4 @@ const startGamePlay = (name: string) => {
     height:100%;
   }
 </style>
+../models/Game0bject.js
