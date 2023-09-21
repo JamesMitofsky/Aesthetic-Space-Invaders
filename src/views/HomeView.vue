@@ -8,16 +8,32 @@ import Enemy from "../models/Enemy";
 let gameObjectList: GameObject[] = [];
 const windowHeight = 600;
 const windowWidth = 400;
+let player: GameObject | null= null;
 
-const player = new Player();
-player.setPosition((windowWidth - player.width) / 2, windowHeight - 80);
-gameObjectList.push(player);
+const updateEnemyPosition = () => {
+  const enemyList = gameObjectList.filter(el => el.tag === "enemy");
+  let pixelDown = 0;
+  for (let enemy of enemyList) {
+    console.log("toto");
+    if (enemy.x < 20) {
+      enemyList.forEach(enemy => {enemy.directionX = 1});
+      enemyList.forEach(enemy => {enemy.y += pixelDown});
+      pixelDown += 2;
+    }
+    if (enemy.x > 400 - 20 - enemy.width) {
+      enemyList.forEach(enemy => enemy.directionX = -1);
+      enemyList.forEach(enemy => {enemy.y += pixelDown});
+      pixelDown += 2;
+    }
+    if (enemy.y + enemy.height >= 480) {
+      // Si l'ennemi atteint le bas du canevas, c'est la fin du jeu
+      // alert("Game Over");
+      // // Rechargez la page
+      // window.location.reload();
+    }
+    console.log(pixelDown);
 
-for (let i = 0; i < 3; i++) {
-  for (let j = 0; j < 5; j++) {
-    const enemy = new Enemy();
-    enemy.setPosition(j * 60, i * 60);
-    gameObjectList.push(enemy);
+    // console.log(enemy.y);
   }
 }
 
@@ -37,22 +53,6 @@ const step = ref<Step>("startGame");
 const firstName = ref("");
 const margin = 10;
 
-// Declare player object
-// const player: Player = {
-//   x: (width - spaceshipSize) / 2,
-//   y: height - 100,
-//   width: spaceshipSize,
-//   height: spaceshipSize,
-//   speed: 0.5,
-//   bullets: [],
-//   lastShootTime: 0
-// }
-
-// const aliens: Aliens = {
-//   aliensEachLines: 8,
-//   aliensLines: 8,
-//   alienList: []
-// }
 // Initialize the game
 const initGame = () => {
   const canvas = document.getElementById('canvas') as HTMLCanvasElement | null
@@ -65,13 +65,18 @@ const initGame = () => {
   } else {
     console.error("Can't find the canvas element")
   }
-  // for (let i = 0; i < aliens.aliensLines; i++) {
-  //   let list = []
-  //   for (let j = 0; j < aliens.aliensEachLines; j++) {
-  //     list.push({x: j * 40, y: i * 40});
-  //   }
-  //   aliens.alienList.push(list)
-  // }
+
+  player = new Player();
+  player.setPosition((windowWidth - player.width) / 2, windowHeight - 80);
+  gameObjectList.push(player);
+
+  for (let i = 0; i < 5; i++) {
+    for (let j = 0; j < 4; j++) {
+      const enemy = new Enemy();
+      enemy.setPosition(j * 60, i * 60);
+      gameObjectList.push(enemy);
+    }
+  }
 }
 
 // Assign pressed key to global variable
@@ -93,92 +98,10 @@ const setArrowKeysNull = () => {
   }
 }
 
-// const enemyMovement = () => {
-//   for () {
-//     for (alien of aliens.aliensEachLines) {
-//       if ()
-//     }
-//     aliens.alienList.push(list)
-//   }
-// }
-
-// Function to draw the spaceship on the canvas
-// function drawSpaceship(context: CanvasRenderingContext2D) {
-
-//   // Ceate a new image element
-//   const spaceshipImageElement = new Image()
-
-//   // Set the source of the image element to the spaceship image
-//   spaceshipImageElement.src = SpaceshipImage
-
-//   // Draw the spaceship image element on the canvas
-//   context.drawImage(spaceshipImageElement, player.x, player.y, spaceshipSize, spaceshipSize)
-// }
-
-// Function to draw the bullets on the canvas
-// function drawBullets(context: CanvasRenderingContext2D) {
-
-//   // Set the size of the bullets
-//   const bulletSize = 10
-
-//   // Loop through the bullets array and draw each bullet
-//   // player.bullets.forEach((bullet) => {
-  
-//   // Create a new image element
-//   const bulletImageElement = new Image()
-
-//   // Set the source of the image element to the bullet image
-//   bulletImageElement.src = BulletImage
-
-//   // Draw the bullet image element on the canvas
-//   // context.drawImage(bulletImageElement, bullet.x, bullet.y, bulletSize, bulletSize)
-//   })
-
-// }
-
-// function drawALiens(context: CanvasRenderingContext2D) {
-
-// // Set the size of the bullets
-//   const alienSize = 40
-
-//   // Loop through the bullets array and draw each bullet
-//   aliens.alienList.forEach((aliens) => {
-//     aliens.forEach((alien) => {
-//       const alienImageElement = new Image()
-//       alienImageElement.src = AlienImage
-
-//   // Draw the bullet image element on the canvas
-//     context.fillStyle = "red";
-//     context.drawImage(alienImageElement, alien.x, alien.y, alienSize, alienSize)
-//   })
-// })
-
-// }
-
-// // Function to add the bullets to the player object
-// function addBulletToPlayer() {
-
-//   // Set the size of the bullets
-//   const bulletSize = 10
-
-//   // push each new bullet into the bullets array
-//   player.bullets.push({
-
-//     // Set the x and y coordinates of the bullet
-//     x: player.x + player.width / 2 - bulletSize / 2,
-//     y: player.y - bulletSize / 2
-//   })
-// }
-
 const draw = () => {
   for (let gameobject of gameObjectList) {
     gameobject.draw(context);
-    // context?.drawImage(gameobject.image, gameobject.x, gameobject.y, gameobject.width, gameobject.height);
   }
-  // Error checking
-  // drawSpaceship(context)
-  // drawBullets(context)
-  // drawALiens(context)
 }
 
 // Function that contains the game events
@@ -203,16 +126,17 @@ const gameLoop = (timeStamp: number) => {
   document.onkeydown = onKeyPressed
   document.onkeyup = setArrowKeysNull
 
-  gameUpdate(deltaTime)
-  draw()
+  gameUpdate(deltaTime);
+  draw();
 
   // Call the game loop again on the next frame
   window.requestAnimationFrame(gameLoop)
 }
 
 const gameUpdate = (deltaTime: number) => {
+  updateEnemyPosition();
   // chek for collisions
-  for (const missile of player.children) {
+  for (const missile of player!.children) {
     for (const gameObject of gameObjectList) {
       if (gameObject.tag ==="enemy") {
         // Check collision with enemy

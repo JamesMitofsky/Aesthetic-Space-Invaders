@@ -7,6 +7,8 @@ export default class GameObject {
     speed: number
     children: GameObject[]
     tag: string
+    directionX: number
+    directionY: number
 
     constructor() {
         this.x = 0;
@@ -17,6 +19,8 @@ export default class GameObject {
         this.speed = 0;
         this.children = [];
         this.tag = "default";
+        this.directionX = 1;
+        this.directionY = 0;
     }
 
     mainUpdate(dt: number, key: string | null) {
