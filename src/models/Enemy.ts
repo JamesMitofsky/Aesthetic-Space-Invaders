@@ -1,5 +1,5 @@
-import GameObject from "./Game0bject";
-import Alien from "../assets/invaders.png";
+import Alien from '../assets/invaders.png'
+import GameObject from './GameObject'
 
 export default class Enemy extends GameObject {
     constructor() {

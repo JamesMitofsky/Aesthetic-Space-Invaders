@@ -2,10 +2,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=VT323&display=swap');
 
 * {
-    font-family: 'Lato', sans-serif;
-    font-family: 'VT323', monospace;
+  font-family: 'Lato', sans-serif;
+  font-family: 'VT323', monospace;
 }
 
 body {
-    background-color: black;
+  background-color: black;
 }
