@@ -4,6 +4,7 @@ import Modal from '../components/StartGameModal.vue'
 import Enemy from '../models/Enemy'
 import GameObject from '../models/GameObject'
 import Player from '../models/Player'
+import type { Key } from '../types/key'
 import type { Step } from '../types/step'
 
 let gameObjectList: GameObject[] = []
@@ -26,7 +27,7 @@ let oldTimeStamp = 0
 
 let context: CanvasRenderingContext2D | null = null
 
-let pressedKey: string | null = null
+let pressedKey: Key = null
 
 const startGame = ref(false)
 const step = ref<Step>('startGame')
@@ -48,7 +49,7 @@ const initGame = () => {
 // Assign pressed key to global variable
 const onKeyPressed = (event: KeyboardEvent) => {
   // Store pressed key
-  const currentlyPressedKey = event.key
+  const currentlyPressedKey = event.key as Key
 
   // Update stored pressed key
   pressedKey = currentlyPressedKey

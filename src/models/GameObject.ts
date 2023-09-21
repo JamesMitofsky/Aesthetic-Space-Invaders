@@ -1,3 +1,5 @@
+import type { Key } from '@/types/key'
+
 export default class GameObject {
   x: number
   y: number
@@ -19,14 +21,14 @@ export default class GameObject {
     this.tag = 'default'
   }
 
-  mainUpdate(dt: number, key: string | null) {
+  mainUpdate(dt: number, key: Key) {
     this.update(dt, key)
     for (const child of this.children) {
       child.mainUpdate(dt, key)
     }
   }
 
-  update(dt: number, key: string | null) {}
+  update(dt: number, key: Key) {}
 
   setPosition(x: number, y: number) {
     // set x and y position
