@@ -39,10 +39,15 @@ const props = defineProps<{
   step: Step
 }>()
 console.log(props.step)
-const emit = defineEmits(['setGameMode', 'setRegister', 'startGamePlay', 'revenge'])
+const emit = defineEmits<{
+  setGameMode: [mode: Step]
+  setRegister: [register: Step]
+  startGamePlay: [firstName: string]
+  revenge: [restartGame: Step]
+}>()
 </script>
 
-<style>
+<style scoped>
 .setgame-main-container {
   width: 100vw;
   height: 100vh;
