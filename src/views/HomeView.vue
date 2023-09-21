@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue'
+import TopPlayerScoresVue from '@/components/TopPlayerScores.vue'
+import { onUnmounted, ref } from 'vue'
 import Modal from '../components/GameModal.vue'
 import Enemy from '../models/Enemy'
 import GameObject from '../models/GameObject'
@@ -19,7 +20,6 @@ const startGame = ref(false)
 const step = ref<Step>('startGame')
 const firstName = ref('')
 
-
 const drawCanvas = () => {
   const canvas = document.getElementById('canvas') as HTMLCanvasElement | null
   // Check if canvas exists, if so, get context and start game loop
@@ -32,7 +32,7 @@ const drawCanvas = () => {
 }
 
 const clearCanvas = () => {
-  context?.closePath();
+  context?.closePath()
 }
 // Initialize the game
 const initGame = () => {
@@ -71,7 +71,7 @@ const updateEnemyPosition = () => {
       pixelDown += 2
     }
     if (enemy.y + enemy.height >= 480) {
-      step.value = "gameOver"
+      step.value = 'gameOver'
       startGame.value = false
     }
   }
@@ -135,19 +135,24 @@ const gameUpdate = (deltaTime: number) => {
     for (const missile of player.children) {
       for (const gameObject of gameObjectList) {
         if (gameObject.tag === 'enemy') {
-          if(missile.x > gameObject.x && missile.x < gameObject.x + gameObject.width && missile.y > gameObject.y && missile.y < gameObject.y + gameObject.height) {
-            console.log("collision")
+          if (
+            missile.x > gameObject.x &&
+            missile.x < gameObject.x + gameObject.width &&
+            missile.y > gameObject.y &&
+            missile.y < gameObject.y + gameObject.height
+          ) {
+            console.log('collision')
             // Remove missile from player children
-              player.children = player!.children.filter((child) => child !== missile)
-              // Remove enemy from gameobjectlist
-              gameObjectList = gameObjectList.filter((object) => object !== gameObject)
-              score.value ++;
-            }
+            player.children = player!.children.filter((child) => child !== missile)
+            // Remove enemy from gameobjectlist
+            gameObjectList = gameObjectList.filter((object) => object !== gameObject)
+            score.value++
+          }
         }
       }
     }
   } else {
-    console.error("player is null");
+    console.error('player is null')
   }
 
   // Update main objects
@@ -177,23 +182,23 @@ const startGamePlay = (name: string) => {
 }
 
 onUnmounted(() => {
-  clearCanvas();
+  clearCanvas()
 })
 </script>
 
 <template>
   <body class="no-scroll">
     <div class="flex">
-      <p> {{ `score: ${score}`}}</p>
+      <p>{{ `score: ${score}` }}</p>
       <template v-if="!startGame">
         <Modal
           :step="step"
           @set-game-mode="setgameMode"
           @set-register="setRegister"
           @start-game-play="startGamePlay"
-          @revenge="restartGame"
         />
       </template>
+      <TopPlayerScoresVue />
       <div class="canvas-container">
         <canvas id="canvas" :height="windowHeight" :width="windowWidth" />
       </div>
