@@ -7,25 +7,31 @@ import Player from '../models/Player'
 import type { Key } from '../types/key'
 import type { Step } from '../types/step'
 
-let gameObjectList: GameObject[] = [];
-const windowHeight = 600;
-const windowWidth = 400;
-let player: GameObject | null= null;
+let gameObjectList: GameObject[] = []
+const windowHeight = 600
+const windowWidth = 400
+let player: GameObject | null = null
 
 const updateEnemyPosition = () => {
-  const enemyList = gameObjectList.filter(el => el.tag === "enemy");
-  let pixelDown = 0;
+  const enemyList = gameObjectList.filter((el) => el.tag === 'enemy')
+  let pixelDown = 0
   for (let enemy of enemyList) {
-    console.log("toto");
+    console.log('toto')
     if (enemy.x < 20) {
-      enemyList.forEach(enemy => {enemy.directionX = 1});
-      enemyList.forEach(enemy => {enemy.y += pixelDown});
-      pixelDown += 2;
+      enemyList.forEach((enemy) => {
+        enemy.directionX = 1
+      })
+      enemyList.forEach((enemy) => {
+        enemy.y += pixelDown
+      })
+      pixelDown += 2
     }
     if (enemy.x > 400 - 20 - enemy.width) {
-      enemyList.forEach(enemy => enemy.directionX = -1);
-      enemyList.forEach(enemy => {enemy.y += pixelDown});
-      pixelDown += 2;
+      enemyList.forEach((enemy) => (enemy.directionX = -1))
+      enemyList.forEach((enemy) => {
+        enemy.y += pixelDown
+      })
+      pixelDown += 2
     }
     if (enemy.y + enemy.height >= 480) {
       // Si l'ennemi atteint le bas du canevas, c'est la fin du jeu
@@ -33,7 +39,7 @@ const updateEnemyPosition = () => {
       // // Rechargez la page
       // window.location.reload();
     }
-    console.log(pixelDown);
+    console.log(pixelDown)
 
     // console.log(enemy.y);
   }
@@ -61,15 +67,15 @@ const initGame = () => {
     console.error("Can't find the canvas element")
   }
 
-  player = new Player();
-  player.setPosition((windowWidth - player.width) / 2, windowHeight - 80);
-  gameObjectList.push(player);
+  player = new Player()
+  player.setPosition((windowWidth - player.width) / 2, windowHeight - 80)
+  gameObjectList.push(player)
 
   for (let i = 0; i < 5; i++) {
     for (let j = 0; j < 4; j++) {
-      const enemy = new Enemy();
-      enemy.setPosition(j * 60, i * 60);
-      gameObjectList.push(enemy);
+      const enemy = new Enemy()
+      enemy.setPosition(j * 60, i * 60)
+      gameObjectList.push(enemy)
     }
   }
 }
@@ -93,7 +99,7 @@ const setArrowKeysNull = () => {
 
 const draw = () => {
   for (let gameobject of gameObjectList) {
-    gameobject.draw(context);
+    gameobject.draw(context)
   }
 }
 
@@ -118,15 +124,15 @@ const gameLoop = (timeStamp: number) => {
   document.onkeydown = onKeyPressed
   document.onkeyup = setArrowKeysNull
 
-  gameUpdate(deltaTime);
-  draw();
+  gameUpdate(deltaTime)
+  draw()
 
   // Call the game loop again on the next frame
   window.requestAnimationFrame(gameLoop)
 }
 
 const gameUpdate = (deltaTime: number) => {
-  updateEnemyPosition();
+  updateEnemyPosition()
   // chek for collisions
   for (const missile of player!.children) {
     for (const gameObject of gameObjectList) {
