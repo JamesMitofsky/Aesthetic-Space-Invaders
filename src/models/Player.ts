@@ -1,5 +1,5 @@
-import GameObject from './Game0bject'
 import SpaceshipImage from '../assets/spaceship.png'
+import GameObject from './GameObject'
 import Missile from './Missile'
 
 export default class Player extends GameObject {

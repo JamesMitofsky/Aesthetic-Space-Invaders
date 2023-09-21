@@ -1,5 +1,5 @@
-import GameObject from './Game0bject'
 import Bullet from '../assets/bullets.png'
+import GameObject from './GameObject'
 
 export default class Missile extends GameObject {
   constructor() {

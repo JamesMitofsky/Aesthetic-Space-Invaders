@@ -2,8 +2,9 @@
 import { ref } from 'vue'
 import Modal from '../components/StartGameModal.vue'
 import Enemy from '../models/Enemy'
-import GameObject from '../models/Game0bject'
+import GameObject from '../models/GameObject'
 import Player from '../models/Player'
+import type { Step } from '../types/step'
 
 let gameObjectList: GameObject[] = []
 const windowHeight = 600
@@ -20,8 +21,6 @@ for (let i = 0; i < 3; i++) {
     gameObjectList.push(enemy)
   }
 }
-
-export type Step = 'startGame' | 'gameMode' | 'register'
 
 let oldTimeStamp = 0
 

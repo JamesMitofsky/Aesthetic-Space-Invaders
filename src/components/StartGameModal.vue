@@ -24,7 +24,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import type { Step } from '@/views/HomeView.vue'
+import type { Step } from '../types/step'
 
 const firstName = ref('')
 const props = defineProps<{
