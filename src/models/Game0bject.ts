@@ -52,8 +52,6 @@ export default class GameObject {
   }
 
   draw(context: CanvasRenderingContext2D | null) {
-    // context!.fillStyle = "red";
-    // context?.fillRect(this.x, this.y, this.width, this.height);
     if (this.image) {
       context?.drawImage(this.image, this.x, this.y, this.width, this.height)
       for (const child of this.children) {
