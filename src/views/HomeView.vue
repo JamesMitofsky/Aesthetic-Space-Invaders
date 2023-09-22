@@ -21,6 +21,7 @@ const step = ref<Step>('startGame')
 const firstName = ref('')
 const gameOver = ref(false)
 const gameWin = ref(false)
+const gameNumber = ref(0)
 
 const drawCanvas = () => {
   const canvas = document.getElementById('canvas') as HTMLCanvasElement | null
@@ -81,7 +82,7 @@ const updateEnemyPosition = () => {
       })
     }
     if (player) {
-      if (enemy.y + enemy.height > player.y + player.height || collision(player, enemy)) {
+      if (collision(player, enemy)) {
         gameOver.value = true
       }
     }
@@ -135,7 +136,7 @@ const gameLoop = (timeStamp: number) => {
   // Listen for key events and update the pressed key
   document.onkeydown = onKeyPressed
   document.onkeyup = setArrowKeysNull
-  if (!gameOver.value) {
+  if (!gameOver.value || !gameWin.value) {
     gameUpdate(deltaTime)
   }
   draw()
@@ -195,6 +196,7 @@ const refreshPage = () => {
   gameOver.value = false
   gameWin.value = false
   oldTimeStamp.value = 0
+  gameNumber.value ++
 }
 
 onUnmounted(() => {
@@ -204,7 +206,7 @@ onUnmounted(() => {
 
 <template>
   <body>
-    <div class="flex">
+    <div class="flex" :key="gameNumber">
       <p>{{ `score: ${score}` }}</p>
       <template v-if="!startGame">
         <Modal
@@ -220,9 +222,14 @@ onUnmounted(() => {
       <div class="canvas-container">
         <canvas id="canvas" :height="windowHeight" :width="windowWidth" />
       </div>
-      <template v-if="gameOver || gameWin">
+      <template v-if="gameOver">
         <div class="game-over">
           <h1 v-if="gameOver">GAME OVER</h1>
+          <button @click="refreshPage()">Rejouer</button>
+        </div>
+      </template>
+      <template v-if="gameWin">
+        <div class="game-win">
           <h1 v-if="gameWin">YOU WIN</h1>
           <button @click="refreshPage()">Rejouer</button>
         </div>
@@ -239,7 +246,7 @@ onUnmounted(() => {
   align-items: center;
 }
 
-.game-over {
+.game-over, .game-win {
   position: absolute;
   z-index: 1;
   background-color: rgba(25, 23, 23, 0.7);
