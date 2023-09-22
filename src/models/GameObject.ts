@@ -34,6 +34,7 @@ export default class GameObject {
     }
   }
 
+  // called in classes Player & Enemy
   update(dt: number, key: Key) {}
 
   setPosition(x: number, y: number) {
