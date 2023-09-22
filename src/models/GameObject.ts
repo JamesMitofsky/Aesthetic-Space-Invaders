@@ -8,7 +8,7 @@ export default class GameObject {
   image: any
   speed: number
   children: GameObject[]
-  tag: string
+  tag: 'enemy' | 'player' | 'default'
   directionX: number
   directionY: number
   speedY: number
@@ -24,7 +24,7 @@ export default class GameObject {
     this.tag = 'default'
     this.directionX = 1
     this.directionY = 0
-    this.speedY = 3;
+    this.speedY = 3
   }
 
   mainUpdate(dt: number, key: Key) {
