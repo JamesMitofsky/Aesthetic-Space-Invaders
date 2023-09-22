@@ -16,7 +16,6 @@ let score = ref(0)
 const oldTimeStamp = ref(0)
 let context: CanvasRenderingContext2D | null = null
 let pressedKey: Key = null
-const startGame = ref(false)
 const step = ref<Step>('startGame')
 const firstName = ref('')
 const gameOver = ref(false)
@@ -58,7 +57,7 @@ const collision = (object1: GameObject, object2: GameObject) => {
     object1.x > object2.x &&
     object1.x < object2.x + object2.width &&
     object1.y > object2.y &&
-    object1.y < object2.y + object2?.height
+    object1.y < object2.y + object2.height
   ) {
     return true
   }
@@ -184,7 +183,7 @@ const setRegister = (register: Step) => {
 }
 
 const startGamePlay = (name: string) => {
-  startGame.value = true
+  step.value = 'playGameNow'
   firstName.value = name
   initGame()
 }
@@ -208,7 +207,7 @@ onUnmounted(() => {
   <body>
     <div class="flex" :key="gameNumber">
       <p>{{ `score: ${score}` }}</p>
-      <template v-if="!startGame">
+      <template v-if="step !== 'playGameNow'">
         <Modal
           :step="step"
           @set-game-mode="setgameMode"
