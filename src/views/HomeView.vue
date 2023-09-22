@@ -43,10 +43,10 @@ const initGame = () => {
   player.setPosition((windowWidth - player.width) / 2, windowHeight - 80)
   gameObjectList.push(player)
 
-  for (let i = 0; i < 5; i++) {
-    for (let j = 0; j < 7; j++) {
+  for (let aliensPerColumn = 0; aliensPerColumn < 5; aliensPerColumn++) {
+    for (let aliensPerRow = 0; aliensPerRow < 7; aliensPerRow++) {
       const enemy = new Enemy()
-      enemy.setPosition(j * enemy.width, i * enemy.height)
+      enemy.setPosition(aliensPerRow * enemy.width, aliensPerColumn * enemy.height)
       gameObjectList.push(enemy)
     }
   }
