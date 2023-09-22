@@ -13,14 +13,14 @@ const windowHeight = 700
 const windowWidth = 600
 let player: GameObject | null = null
 let score = ref(0)
-let oldTimeStamp = 0
+const oldTimeStamp = ref(0)
 let context: CanvasRenderingContext2D | null = null
 let pressedKey: Key = null
 const startGame = ref(false)
 const step = ref<Step>('startGame')
 const firstName = ref('')
-const gameOver = ref(false);
-const gameWin = ref(false);
+const gameOver = ref(false)
+const gameWin = ref(false)
 
 const drawCanvas = () => {
   const canvas = document.getElementById('canvas') as HTMLCanvasElement | null
@@ -34,7 +34,7 @@ const drawCanvas = () => {
 }
 
 const clearCanvas = () => {
-  context?.closePath();
+  context?.closePath()
 }
 // Initialize the game
 const initGame = () => {
@@ -52,42 +52,52 @@ const initGame = () => {
   }
 }
 
-const collision = (object1: GameObject, object2: GameObject)=> {
-  if (object1.x > object2.x &&
-        object1.x < object2.x + object2.width &&
-        object1.y > object2.y &&
-        object1.y < object2.y + object2?.height
-    ) {
-      return true;
-    }
+const collision = (object1: GameObject, object2: GameObject) => {
+  if (
+    object1.x > object2.x &&
+    object1.x < object2.x + object2.width &&
+    object1.y > object2.y &&
+    object1.y < object2.y + object2?.height
+  ) {
+    return true
+  }
 }
 
 const updateEnemyPosition = () => {
   const enemyList = gameObjectList.filter((el) => el.tag === 'enemy')
   for (let enemy of enemyList) {
     if (enemy.x < 0) {
-      enemyList.forEach((enemy) => { enemy.directionX = 1 })
-      enemyList.forEach((enemy) => { enemy.y +=  enemy.speedY})
+      enemyList.forEach((enemy) => {
+        enemy.directionX = 1
+      })
+      enemyList.forEach((enemy) => {
+        enemy.y += enemy.speedY
+      })
     }
     if (enemy.x + enemy.width > windowWidth) {
       enemyList.forEach((enemy) => (enemy.directionX = -1))
-      enemyList.forEach((enemy) => {enemy.y += enemy.speedY})
+      enemyList.forEach((enemy) => {
+        enemy.y += enemy.speedY
+      })
     }
     if (player) {
       if (enemy.y + enemy.height > player.y + player.height || collision(player, enemy)) {
-        gameOver.value = true;
+        gameOver.value = true
       }
     }
   }
   if (enemyList.length === 0) {
-    gameWin.value = true;
+    gameWin.value = true
   }
 }
 
 const adjustEnemiesSpeed = (gameObjectList: any) => {
   const enemyList = gameObjectList.filter((el: any) => el.tag === 'enemy')
-    if (enemyList.length <= 5) {
-      enemyList.forEach((enemy: any) => { enemy.speed = 0.4; enemy.speedY = 15;})
+  if (enemyList.length <= 5) {
+    enemyList.forEach((enemy: any) => {
+      enemy.speed = 0.4
+      enemy.speedY = 15
+    })
   }
 }
 
@@ -101,7 +111,7 @@ const onKeyPressed = (event: KeyboardEvent) => {
 
 // Check if pressed key is p, if not, set pressed key to null
 const setArrowKeysNull = () => {
-    pressedKey = null
+  pressedKey = null
 }
 
 const draw = () => {
@@ -112,9 +122,9 @@ const draw = () => {
 // Function that contains the game events
 const gameLoop = (timeStamp: number) => {
   // Calculate the time since the last frame
-  const deltaTime = timeStamp - oldTimeStamp
+  const deltaTime = timeStamp - oldTimeStamp.value
   // Set the old time stamp to the current time stamp
-  oldTimeStamp = timeStamp
+  oldTimeStamp.value = timeStamp
   // Error checking
   if (!context) {
     console.error("Can't find the context ", context)
@@ -136,15 +146,17 @@ const gameLoop = (timeStamp: number) => {
 const gameUpdate = (deltaTime: number) => {
   updateEnemyPosition()
   // chek for collisions
-  adjustEnemiesSpeed(gameObjectList);
+  adjustEnemiesSpeed(gameObjectList)
   if (player) {
     for (const missile of player.children) {
       for (const gameObject of gameObjectList) {
         if (gameObject.tag === 'enemy') {
           if (collision(missile, gameObject)) {
             // Remove missile from player children
-            const indexOfMissileToRemove = gameObjectList.findIndex(el => el.x === missile.x && el.y === missile.y)
-            player.children.splice(indexOfMissileToRemove, 1);
+            const indexOfMissileToRemove = gameObjectList.findIndex(
+              (el) => el.x === missile.x && el.y === missile.y
+            )
+            player.children.splice(indexOfMissileToRemove, 1)
             // Remove enemy from gameobjectlist
             gameObjectList = gameObjectList.filter((object) => object !== gameObject)
             score.value++
@@ -173,19 +185,20 @@ const setRegister = (register: Step) => {
 const startGamePlay = (name: string) => {
   startGame.value = true
   firstName.value = name
-  initGame();
+  initGame()
 }
 
 const refreshPage = () => {
-  gameObjectList = [];
-  clearCanvas();
-  window.location.reload();
-  gameOver.value = false;
-  gameWin.value = false;
+  gameObjectList = []
+  clearCanvas()
+  window.location.reload()
+  gameOver.value = false
+  gameWin.value = false
+  oldTimeStamp.value = 0
 }
 
 onUnmounted(() => {
-  clearCanvas();
+  clearCanvas()
 })
 </script>
 
@@ -243,7 +256,7 @@ onUnmounted(() => {
 
 .flex {
   position: relative;
-  background-image: url("../assets/sky.png");
+  background-image: url('../assets/sky.png');
   height: 100vh;
   display: flex;
   flex-direction: column;
