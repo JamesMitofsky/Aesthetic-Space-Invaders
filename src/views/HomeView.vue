@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import TopPlayerScoresVue from '@/components/TopPlayerScores.vue'
-import { onUnmounted, ref } from 'vue'
+import addNewScore from '@/database/addNewScore'
+import { onUnmounted, ref, watch } from 'vue'
 import Modal from '../components/GameModal.vue'
 import Enemy from '../models/Enemy'
 import GameObject from '../models/GameObject'
@@ -18,8 +19,6 @@ let context: CanvasRenderingContext2D | null = null
 let pressedKey: Key = null
 const step = ref<Step>('startGame')
 const firstName = ref('')
-const gameOver = ref(false)
-const gameWin = ref(false)
 const gameNumber = ref(0)
 
 const drawCanvas = () => {
@@ -82,12 +81,12 @@ const updateEnemyPosition = () => {
     }
     if (player) {
       if (enemy.y + enemy.height > player.y + player.height || collision(player, enemy)) {
-        gameOver.value = true
+        step.value = 'gameOver'
       }
     }
   }
   if (enemyList.length === 0) {
-    gameWin.value = true
+    step.value = 'gameOver'
   }
 }
 
@@ -135,7 +134,7 @@ const gameLoop = (timeStamp: number) => {
   // Listen for key events and update the pressed key
   document.onkeydown = onKeyPressed
   document.onkeyup = setArrowKeysNull
-  if (!gameOver.value) {
+  if (step.value !== 'gameOver') {
     gameUpdate(deltaTime)
   }
   draw()
@@ -192,14 +191,20 @@ const refreshPage = () => {
   gameObjectList = []
   clearCanvas()
   window.location.reload()
-  gameOver.value = false
-  gameWin.value = false
+  step.value = 'startGame'
   oldTimeStamp.value = 0
   gameNumber.value++
 }
 
 onUnmounted(() => {
   clearCanvas()
+})
+
+watch(step, (newValue, oldValue) => {
+  if (newValue === 'gameOver' && oldValue === 'playGameNow') {
+    console.log('Sending score to server')
+    addNewScore(score.value, firstName.value)
+  }
 })
 </script>
 
@@ -221,15 +226,9 @@ onUnmounted(() => {
       <div class="canvas-container">
         <canvas id="canvas" :height="windowHeight" :width="windowWidth" />
       </div>
-      <template v-if="gameOver">
+      <template v-if="step === 'gameOver'">
         <div class="game-over">
-          <h1 v-if="gameOver">GAME OVER</h1>
-          <button @click="refreshPage()">Rejouer</button>
-        </div>
-      </template>
-      <template v-if="gameWin">
-        <div class="game-win">
-          <h1 v-if="gameWin">YOU WIN</h1>
+          <h1>GAME OVER</h1>
           <button @click="refreshPage()">Rejouer</button>
         </div>
       </template>

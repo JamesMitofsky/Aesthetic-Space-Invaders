@@ -1,10 +1,13 @@
 <template>
-  <div v-if="topScores.length > 1">
+  <template v-if="topScores.length > 0">
     <h1>Top Player Scores</h1>
     <ul>
       <li v-for="score in topScores" :key="score.id">{{ score.username }} - {{ score.score }}</li>
     </ul>
-  </div>
+  </template>
+  <template v-else>
+    <p>Aucun score pour le moment!</p>
+  </template>
 </template>
 
 <script setup lang="ts">
@@ -29,9 +32,9 @@ onMounted(async () => {
 </script>
 
 <style>
-  li {
-    font-size: 20px;
-    list-style: decimal;
-    margin: auto;
-  }
+li {
+  font-size: 20px;
+  list-style: decimal;
+  margin: auto;
+}
 </style>
