@@ -83,7 +83,7 @@ const updateEnemyPosition = () => {
     }
     if (player) {
       if (enemy.y + enemy.height > player.y + player.height || collision(player, enemy)) {
-        gameOver.value = true;
+        gameOver.value = true
       }
     }
   }
@@ -92,10 +92,10 @@ const updateEnemyPosition = () => {
   }
 }
 
-const adjustEnemiesSpeed = (gameObjectList: any) => {
-  const enemyList = gameObjectList.filter((el: any) => el.tag === 'enemy')
+const adjustEnemiesSpeed = (gameObjectList: GameObject[]) => {
+  const enemyList = gameObjectList.filter((el) => el.tag === 'enemy')
   if (enemyList.length <= 5) {
-    enemyList.forEach((enemy: any) => {
+    enemyList.forEach((enemy) => {
       enemy.speed = 0.4
       enemy.speedY = 15
     })
@@ -196,7 +196,7 @@ const refreshPage = () => {
   gameOver.value = false
   gameWin.value = false
   oldTimeStamp.value = 0
-  gameNumber.value ++
+  gameNumber.value++
 }
 
 onUnmounted(() => {
@@ -246,7 +246,8 @@ onUnmounted(() => {
   align-items: center;
 }
 
-.game-over, .game-win {
+.game-over,
+.game-win {
   position: absolute;
   z-index: 1;
   background-color: rgba(25, 23, 23, 0.7);

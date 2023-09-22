@@ -5,7 +5,7 @@ export default class GameObject {
   y: number
   width: number
   height: number
-  image: any
+  image: HTMLImageElement | null
   speed: number
   children: GameObject[]
   tag: 'enemy' | 'player' | 'default'
