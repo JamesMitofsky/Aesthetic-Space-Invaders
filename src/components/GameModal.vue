@@ -1,16 +1,16 @@
 <template>
   <div class="setgame-main-container overlay">
     <div class="setgame-container">
-      <template v-if="props.step === 'startGame'">
-        <button @click="emit('setGameMode', 'gameMode')">Commencer la partie</button>
+      <template v-if="props.step === 'landingPage'">
+        <button @click="emit('setGameMode', 'selectGameMode')">Commencer la partie</button>
       </template>
-      <template v-if="props.step === 'gameMode'">
+      <template v-if="props.step === 'selectGameMode'">
         <div class="game-mode-container">
-          <button @click="emit('setRegister', 'register')">Solo</button>
-          <button @click="emit('setRegister', 'register')" disabled>Multijoueur</button>
+          <button @click="emit('setRegister', 'registerUsername')">Solo</button>
+          <button @click="emit('setRegister', 'registerUsername')" disabled>Multijoueur</button>
         </div>
       </template>
-      <template v-if="props.step === 'register'">
+      <template v-if="props.step === 'registerUsername'">
         <div class="game-mode-container">
           <input placeholder="entrer votre prénom" v-model="firstName" />
           <button @click="emit('startGamePlay', firstName)" :disabled="firstName.length < 3">

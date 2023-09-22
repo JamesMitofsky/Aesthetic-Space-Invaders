@@ -17,7 +17,7 @@ let score = ref(0)
 const oldTimeStamp = ref(0)
 let context: CanvasRenderingContext2D | null = null
 let pressedKey: Key = null
-const step = ref<Step>('startGame')
+const step = ref<Step>('landingPage')
 const firstName = ref('')
 const gameNumber = ref(0)
 
@@ -191,7 +191,7 @@ const refreshPage = () => {
   gameObjectList = []
   clearCanvas()
   window.location.reload()
-  step.value = 'startGame'
+  step.value = 'landingPage'
   oldTimeStamp.value = 0
   gameNumber.value++
 }

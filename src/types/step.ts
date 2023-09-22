@@ -1,1 +1,6 @@
-export type Step = 'startGame' | 'gameMode' | 'register' | 'playGameNow' | 'gameOver'
+export type Step =
+  | 'landingPage'
+  | 'selectGameMode'
+  | 'registerUsername'
+  | 'playGameNow'
+  | 'gameOver'
