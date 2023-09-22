@@ -82,8 +82,8 @@ const updateEnemyPosition = () => {
       })
     }
     if (player) {
-      if (collision(player, enemy)) {
-        gameOver.value = true
+      if (enemy.y + enemy.height > player.y + player.height || collision(player, enemy)) {
+        gameOver.value = true;
       }
     }
   }
@@ -136,7 +136,7 @@ const gameLoop = (timeStamp: number) => {
   // Listen for key events and update the pressed key
   document.onkeydown = onKeyPressed
   document.onkeyup = setArrowKeysNull
-  if (!gameOver.value || !gameWin.value) {
+  if (!gameOver.value) {
     gameUpdate(deltaTime)
   }
   draw()
