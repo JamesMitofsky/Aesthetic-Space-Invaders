@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import TopPlayerScoresVue from '@/components/TopPlayerScores.vue'
-import addNewScore from '@/database/addNewScore'
-import { onUnmounted, ref, watch } from 'vue'
+import { onUnmounted, ref } from 'vue'
 import Modal from '../components/GameModal.vue'
 import Enemy from '../models/Enemy'
 import GameObject from '../models/GameObject'
@@ -21,6 +20,7 @@ const startGame = ref(false)
 const step = ref<Step>('startGame')
 const firstName = ref('')
 const gameOver = ref(false)
+const gameWin = ref(false)
 const gameNumber = ref(0)
 
 const drawCanvas = () => {
@@ -86,6 +86,9 @@ const updateEnemyPosition = () => {
         gameOver.value = true;
       }
     }
+  }
+  if (enemyList.length === 0) {
+    gameWin.value = true
   }
 }
 
@@ -187,25 +190,17 @@ const startGamePlay = (name: string) => {
 }
 
 const refreshPage = () => {
-  clearCanvas()
   gameObjectList = []
-  gameOver.value = false
-  oldTimeStamp.value = 0
-  gameOver.value = false
-  oldTimeStamp.value = 0
-  gameNumber.value++
+  clearCanvas()
   window.location.reload()
+  gameOver.value = false
+  gameWin.value = false
+  oldTimeStamp.value = 0
+  gameNumber.value ++
 }
 
 onUnmounted(() => {
   clearCanvas()
-})
-
-watch(gameOver, (isOver) => {
-  if (isOver) {
-    console.log('writing to database!')
-    addNewScore(score.value, firstName.value)
-  }
 })
 </script>
 
@@ -230,7 +225,12 @@ watch(gameOver, (isOver) => {
       <template v-if="gameOver">
         <div class="game-over">
           <h1 v-if="gameOver">GAME OVER</h1>
-          <p>{{ firstName }}, tu as tué {{ score }} des aliens</p>
+          <button @click="refreshPage()">Rejouer</button>
+        </div>
+      </template>
+      <template v-if="gameWin">
+        <div class="game-win">
+          <h1 v-if="gameWin">YOU WIN</h1>
           <button @click="refreshPage()">Rejouer</button>
         </div>
       </template>
@@ -246,8 +246,7 @@ watch(gameOver, (isOver) => {
   align-items: center;
 }
 
-.game-over,
-.game-win {
+.game-over, .game-win {
   position: absolute;
   z-index: 1;
   background-color: rgba(25, 23, 23, 0.7);
